@@ -102,35 +102,26 @@ exports.deleteAdmin = async(req, res) => {
 
 exports.updatePassword = async(req, res) => {
     try {
-        let admin = await userService.getUserById(req.query.adminId);
+        let admin = await userService.getUserById(req.admin._id);
         if(!admin){
             return res.json({ message: `Admin Not Found....Please try again..`});
         }
-        let comparePassword = await bcryptjs.compare(req.body.oldPassword, req.admin.password);
-        let oldPassword = req.body.oldPassword;
-        if(!oldPassword){
-            return res.json({ message: `Old Password is not Found.. Please Try Again.`});
-        }
+        let comparePassword = await bcrypt.compare(
+            req.body.oldPassword, 
+            admin.password
+        );
         if(!comparePassword){
             return res.json({ message: `Old Password is not match.. Please Try Again.`});
         }
-        let newPassword = req.body.newPassword;
-        if(!newPassword){
-            return res.json({ message:`New Password is Not Found.`});
-        }
-        if(newPassword === oldPassword){
+        if(req.body.newPassword === req.body.oldPassword){
             return res.json({ message: `Old Password and New Password Are Same Please Enter Diffrent Password.`});
         }
-        let confirmPassword = req.body.confirmPassword;
-        if(!confirmPassword){
-            return res.json({ message:`Confirm Password is Not Found.`});
-        }
-        if(newPassword !== confirmPassword){
+        if(req.body.newPassword !== req.body.confirmPassword){
             return res.json({ message: `New Password and Confirm  Password are not same.` });
         }
-        let hashPassword = await bcryptjs.hash(newPassword, 10);
+        let hashPassword = await bcrypt.hash(req.body.newPassword, 10);
         admin = await userService.updateUser(req.admin._id, { password: hashPassword});
-        res.status(200).json({ message: 'Password changed successfully.....' });
+        res.status(200).json({admin, message: 'Password changed successfully.....👍🏻' });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: `Internal Server Error..${console.error()}`});
