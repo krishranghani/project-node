@@ -28,16 +28,6 @@ exports.getAllCarts = async (req, res) => {
             user: req.user._id,
             isDelete: false
         });
-        // calculate total price for each items 
-        // carts = carts.map((item )=>{
-        //     let quantity = item.cartItem.quantity;
-        //     let unitPrice = item.cartItem.price;
-        //     item.totalPrice=unitPrice*quantity;
-        //     console.log(item);
-        //     delete item.cartItem;
-        //     console.log(item);
-        //     return item;
-        // });
         res.status(200).json(carts);
     } catch (error) {
         console.log(error);
